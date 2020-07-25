@@ -7,10 +7,15 @@ var audio1 = new Audio("./검사가 완료되었습니다.mp3");
 var audio2 = new Audio("./마스크를 착용해주세요.mp3");
 var audio3 = new Audio("./마스크 착용은 필수입니다.mp3");
 let maskimgsrc = "maskimg.png";
+
+let btn = document.getElementsByClassName("start_button");
+btn = document.querySelector("button");
+
 // Load the image model and setup the webcam
 async function init() {
-  $("#start_btn").hide();
   //우리가 만든 모델을 불러온다
+  btn.style.display = "none";
+
   const modelURL = URL + "model.json";
   const metadataURL = URL + "metadata.json";
 
