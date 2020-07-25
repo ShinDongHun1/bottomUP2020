@@ -1,5 +1,10 @@
 .index_body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 30px;
+  margin: 30px;
   font-family: "Roboto", sans-serif;
   font-size: 40px;
   letter-spacing: 2.5px;
@@ -8,11 +13,13 @@
 
 .index_body .index_title {
   padding: 10px;
+  margin: 30px;
 }
 
 .index_body .start_btn {
   width: 140px;
   height: 45px;
+  margin: 30px;
   font-family: "Roboto", sans-serif;
   font-size: 11px;
   text-transform: uppercase;
@@ -30,10 +37,14 @@
 }
 
 .index_body .start_btn:hover {
-  background-color: #ffb097;
-  box-shadow: 0px 15px 20px rgba(233, 62, 39, 0.5);
+  background-color: #1f9be2c2;
+  box-shadow: 0px 15px 20px rgba(39, 130, 233, 0.5);
   color: #fff;
   transform: translateY(-7px);
+}
+
+.index_body .start_btn:visited {
+  background-color: white;
 }
 
 .main_body .modal {

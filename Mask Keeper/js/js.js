@@ -3,9 +3,13 @@ const URL = "./my_model/";
 let model, webcam, labelContainer, maxPredictions;
 let checkOperate = 0; // 전역변수로 체킹 변수 설정
 let modal = document.getElementById("myModal");
-
+var audio1 = new Audio("./검사가 완료되었습니다.mp3");
+var audio2 = new Audio("./마스크를 착용해주세요.mp3");
+var audio3 = new Audio("./마스크 착용은 필수입니다.mp3");
+let maskimgsrc = "maskimg.png";
 // Load the image model and setup the webcam
 async function init() {
+  $("#start_btn").hide();
   //우리가 만든 모델을 불러온다
   const modelURL = URL + "model.json";
   const metadataURL = URL + "metadata.json";
@@ -14,7 +18,7 @@ async function init() {
   maxPredictions = model.getTotalClasses();
 
   const flip = true; // whether to flip the webcam
-  webcam = new tmImage.Webcam(400, 400, flip); // 웹캠 사이즈 조정
+  webcam = new tmImage.Webcam(400, 600, flip); // 웹캠 사이즈 조정
   await webcam.setup(); // request access to the webcam
   await webcam.play(); //웹캠 재생
 
@@ -25,15 +29,10 @@ async function init() {
     labelContainer.appendChild(document.createElement("div"));
   }
 }
-
 async function loop() {
-  // labelContainer.childNodes[0].innerHTML = "";
-  // labelContainer.childNodes[1].innerHTML = "";
-
   await webcam.update();
 
   if (checkOperate == 120) {
-    labelContainer.childNodes[0].innerHTML = "판단을 시작하지 뚜두둔";
     console.log("1_판단을 시작하지!");
     var check_predict = await predict(); // 판단 여부를 변수값에 저장
 
@@ -45,6 +44,7 @@ async function loop() {
       window.requestAnimationFrame(loop); //순서 변경 x
     }
   } else if (checkOperate < 120) {
+    labelContainer.childNodes[0].innerHTML = "판단을 시작합니다";
     checkOperate++;
     console.log("1번 : 루프돌자 슝슝");
     window.requestAnimationFrame(loop); //순서 변경 x
@@ -78,10 +78,10 @@ function check(prediction) {
 function printOn(resultOfPrediction) {
   //predict()에 사용 // check()의 결과값을 파라미터로 받음
   return new Promise(function (resolve, reject) {
-    labelContainer.childNodes[1].innerHTML = resultOfPrediction;
-    //웹 화면에 결과값을 띄운다.
-    labelContainer.childNodes[0].innerHTML = "검사가 완료되었습니다";
-    resolve("");
+    setTimeout(() => {
+      labelContainer.childNodes[0].innerHTML = "판단이 완료되었습니다";
+      resolve("");
+    }, 1000);
   });
 } // 이 함수는 2초동안 판단 결과를 보여주기 위한 setInternal 함수에 쓰이기 위함.
 
@@ -102,18 +102,47 @@ async function predict() {
 
   await printOn(result);
   console.log("7_결과 출력 완료");
+  await new Promise((resolve, reject) => {
+    modal.style.display = "block";
+    document.getElementById("text").innerHTML = result;
+    resolve("");
+  });
+  if (result == "마스크 착용") {
+    audio1.currentTime = 0;
+    audio1.play();
+    document.getElementById("text").innerHTML = "검사가 완료되었습니다.";
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        audio1.pause();
+        resolve("");
+      }, 2000);
+    });
+  } else if (result == "마스크 미착용") {
+    audio2.currentTime = 0;
+    audio2.play();
+    document.getElementById("text").innerHTML = "마스크를 착용해주세요!";
+    document.getElementById("maskimg").src = maskimgsrc;
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        audio2.pause();
+        resolve("");
+      }, 2000);
+    });
+    audio3.currentTime = 0;
+    audio3.play();
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        audio3.pause();
+        resolve("");
+      }, 2000);
+    });
+  }
   count = await new Promise((resolve, reject) => {
     setTimeout(() => {
-      modal.style.display = "block";
-      document.getElementById("text").innerHTML = result;
-      resolve(1);
-    }, 2000);
-  });
-  await new Promise((resolve, reject) => {
-    setTimeout(() => {
+      audio1.pause();
       modal.style.display = "none";
-      resolve("");
-    }, 2000);
+      resolve(1);
+    }, 1000);
   });
   return count;
 }
