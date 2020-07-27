@@ -116,6 +116,7 @@ async function predict() {
     audio1.currentTime = 0;
     audio1.play();
     document.getElementById("text").innerHTML = "검사가 완료되었습니다.";
+
     await new Promise((resolve, reject) => {
       setTimeout(() => {
         audio1.pause();
